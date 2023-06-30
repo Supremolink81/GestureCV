@@ -32,19 +32,17 @@ Finally, the size of the images; the photos are far larger than popular image da
 
 # Preprocessing
 
-Preprocessing the data involves a few steps: we first convert the HEIC images to PNG. To ensure all images are the same size, we pad them to a size of 1008x1008. Then, to increase the size of our dataset, we will create more training examples by taking transformations of the images. 
+Preprocessing the data involves a few steps: we first convert the HEIC images to PNG. To ensure all images are the same size, we resize them to a size of 126x126. Then, to increase the size of our dataset, we will create more training examples by taking transformations of the images. 
 
 In this case, we take 90, 180 and 270 degree rotations, then apply Gaussian noise to the images. This results in 8 images generated from 1 original sample, for a total of 12000 images generated from the original data.
-
-All images are scaled down on each side by a factor of 8, giving is 126x126 sized images.
 
 We then split the data into 3 groups; 60% being the training data, 20% being the validation data, and 20% being the test data. In each subset, 1/3 of the data contains no gesture, while 1/6 of the subset is allocated for each gesture.
 
 Sample transformed images:
 
-![First Sample Transformed Image](./IMG_16907.png)
-![Second Sample Transformed Image](./IMG_02581.png)
-![Third Sample Transformed Image](./IMG_09976.png)
+![First Sample Transformed Image](./img10.png)
+![Second Sample Transformed Image](./img23.png)
+![Third Sample Transformed Image](./img51.png)
 
 # Choosing An Architecture For The Classifier
 

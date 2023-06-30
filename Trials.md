@@ -306,7 +306,7 @@ We train with a learning rate of 0.1, a batch size of 300, and 400 epochs. This 
 
 ![Loss Function Graph 51](./loss_function_graph_51.png)
 
-Alright, it may be time to expand the dataset; we will increase the size of the dataset in 2 steps; creating 8 progressively more blurred versions of each image using box blurring, increasing the dataset to 180 000 images. We will then flip all images along the y axis to double the samples. So our final image dataset now contains 360 000 images.
+Alright, it may be time to expand the dataset; we will increase the size of the dataset in 2 steps; creating 8 progressively more blurred versions of each image using box blurring, increasing the dataset to 180 000 images. We will then flip all images along the y axis to double the samples. So our final image dataset now contains 360 000 images. Due to this increase in image size, memory constraints get tight, so the image sizes are reduced to 63x63.
 
 We train with a learning rate of 0.1, a batch size of 500, and 50 epochs. This yields 100.0% training accuracy and 99.968% validation accuracy, with the following loss graph:
 
@@ -370,7 +370,7 @@ We train with a learning rate of 0.01, a batch size of 500, and 50 epochs, with 
 
 Alright, an idea now would be to use a step-based learning rate scheduler to decrease the learning rate at 10 epoch intervals; we will use a gamma value of 0.1 for the scheduler (i.e. at every 10 epoch step the learning rate is multiplied by 0.1).
 
-We train with a learning rate of 0.1, a batch size of 500, and 80 epochs, with an L2 regularization coefficient of 0.01, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs. This yields , with the following loss graph:
+We train with a learning rate of 0.1, a batch size of 500, and 80 epochs, with an L2 regularization coefficient of 0.01, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs. This yields 100.0% training accuracy and 61.0% validation accuracy, with the following loss graph:
 
 ![Loss Function Graph 60](./loss_function_graph_60.png)
 
