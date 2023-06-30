@@ -92,7 +92,7 @@ def load_dataset(path: str, preload_tensors: bool = False) -> GestureDataset:
 def get_training_hyperparameters() -> tuple[float, int, int]:
 
     """
-    Helper function to get the learning rate, epochs and batch size.
+    Helper function to get the learning rate, epochs, batch size and L2 regularization coefficient.
 
     Args:
 
@@ -100,7 +100,7 @@ def get_training_hyperparameters() -> tuple[float, int, int]:
 
     Returns:
 
-        A tuple containing the learning rate, epochs and batch size.
+        A tuple containing the learning rate, epochs, batch size and L2 regularization coefficient.
     """
 
     LEARNING_RATE: float = float(input("Enter learning rate: "))

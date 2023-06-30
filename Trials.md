@@ -374,4 +374,10 @@ We train with a learning rate of 0.1, a batch size of 500, and 80 epochs, with a
 
 ![Loss Function Graph 60](./loss_function_graph_60.png)
 
+Alright, we can definitely see some progress. Let's increase regularization.
+
+We train with a learning rate of 0.1, a batch size of 500, and 80 epochs, with an L2 regularization coefficient of 0.05, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs. This yields 29.307% training accuracy and 27.0% validation accuracy, with the following loss graph:
+
+![Loss Function Graph 61](./loss_function_graph_61.png)
+
 (In progress..)
