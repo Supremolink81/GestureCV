@@ -13,6 +13,7 @@ A total of 1500 image samples were collected, according to the following format:
 - In each location, 50 samples were allocated for each gesture, with 100 being control samples (no gesture).
 - For the control samples, 25 had a face, 25 had a hand, 25 had neither, and 25 had both.
 - For the gestures, 25 were recorded for each hand in various positions, with approximately half (12-13) of the 25 including faces, with the other half not including any face.
+- the gestures recorded are: the middle finger, the ok sign, the thumbs up, and the peace sign (two fingers up)
 
 A few sample images are shown below:
 

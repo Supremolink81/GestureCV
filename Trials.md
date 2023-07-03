@@ -332,7 +332,11 @@ We train with a learning rate of 0.1, a batch size of 500, and 10 epochs. This y
 
 ![Loss Function Graph 54](./loss_function_graph_54.png)
 
-Hm...I'll try removing the augmentation of varying degrees of blur. 
+Hm...it seems the augmentations helped the model somehow? I'll invesigate how this is possible.
+
+After some investigation, it appears the augmentation was causing data corruption. More specifically, the resizing portion of preprocessing, rather than resizing the image directly, incorporated padding of black pixels.
+
+I'll try removing the augmentation of varying degrees of blur. 
 
 We train with a learning rate of 0.1, a batch size of 500, and 50 epochs. This yields 100.0% training accuracy and 23.0% validation accuracy, with the following loss graph:
 
@@ -385,5 +389,31 @@ Regularization was too high; let's decrease it.
 We train with a learning rate of 0.1, a batch size of 500, and 80 epochs, with an L2 regularization coefficient of 0.03, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs. This yields 100.0% training accuracy and 63.6% validation accuracy, with the following loss graph:
 
 ![Loss Function Graph 62](./loss_function_graph_62.png)
+
+Alright, that seemed to work; let's decrease the epochs slightly to avoid overfitting, and increase regularization.
+
+We train with a learning rate of 0.1, a batch size of 500, and 60 epochs, with an L2 regularization coefficient of 0.04, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs. This yields 51.78055555555556% training accuracy and 37.0% validation accuracy, with the following loss graph:
+
+![Loss Function Graph 63](./loss_function_graph_63.png)
+
+Perhaps a regularization in between will work better.
+
+We train with a learning rate of 0.1, a batch size of 500, and 60 epochs, with an L2 regularization coefficient of 0.035, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs. This yields 80.60462962962963% training accuracy and 47.6% validation accuracy, with the following loss graph:
+
+![Loss Function Graph 64](./loss_function_graph_64.png)
+
+Ok, using a CNN has not worked almost at all so far. I think it's time to pivot to something not only more complete, but better suited for the task at hand; the You Only Look Once (YOLO) model for object detection.
+
+Thus far, the model has overfit for many reasons, some of which I list below:
+
+- the dataset is too small; perhaps more data needed to be collected.
+
+- the variance in the images is high. This can lead to overfitting, as high variance in the images makes it difficult for the model to learn underlying structure.
+
+- model architecture is too complex; a complex model architecture can lead to the model "memorizing the data", as the abundance of parameters will lead to more fine tuning, and thus, more variance in the model predictions caused by the extra parameters picking up noise.
+
+The YOLO model, especially the sizes designed for real-time applications, are known to not be the most accurate, so we will be far more lenient in terms of accuracy (in addition, using a CNN didn't have much success either, so we can't bee too picky for state-of-the-art accuracies).
+
+YOLOv5n is what we will start with (it contains 1.9 million parameters).
 
 (In progress..)
