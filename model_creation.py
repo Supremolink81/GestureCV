@@ -5,6 +5,7 @@ import random
 import time
 import os
 import torchvision
+from evaluation import print_evaluation_metrics
 
 if __name__ == "__main__":
 
@@ -52,10 +53,18 @@ if __name__ == "__main__":
 
         print("Model trained, evaluating model...")
 
-        training_accuracy: float = pipeline.evaluate(train_set, BATCH_SIZE, gpu, [0, 1, 2, 3, 4])
+        label_names: list = ["Middle Finger", "No Gesture", "Ok Sign", "Thumbs Up", "Two Fingers"]
 
-        validation_accuracy: float = pipeline.evaluate(validation_set, BATCH_SIZE, gpu, [0, 1, 2, 3, 4])
+        training_ground_truth, training_model_predictions = pipeline.evaluate(train_set, BATCH_SIZE, gpu)
 
-        print(f"{training_accuracy}% training accuracy and {validation_accuracy}% validation accuracy achieved.")
+        validation_ground_truth, validation_model_predictions = pipeline.evaluate(validation_set, BATCH_SIZE, gpu)
+
+        print("Training data results:")
+
+        print_evaluation_metrics(training_ground_truth, training_model_predictions, label_names)
+
+        print("Validation data results:")
+
+        print_evaluation_metrics(validation_ground_truth, validation_model_predictions, label_names)
 
         torch.save(pipeline.model.state_dict(), "GestureNN.pth")
