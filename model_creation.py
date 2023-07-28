@@ -3,9 +3,8 @@ from deep_learning_pipelines import ClassificationPipeline
 from pipeline_setup import *
 import random
 import time
+import os
 import torchvision
-
-torch.hub.load("")
 
 if __name__ == "__main__":
 
@@ -17,15 +16,17 @@ if __name__ == "__main__":
 
     gpu = torch.device("cuda:0")
 
-    train_set: GestureDataset = load_dataset("processed_data/training_data_boosted", preload_tensors=True)
+    train_set: GestureDataset = load_dataset("processed_data/training_data", preload_tensors=True)
+
+    print(f"Training set of size {len(train_set)} loaded.")
 
     validation_set: GestureDataset = load_dataset("processed_data/validation_data", preload_tensors=True)
 
-    test_set: GestureDataset = load_dataset("processed_data/testing_data", preload_tensors=True)
+    print(f"Validation set of size {len(validation_set)} loaded.")
 
-    print(len(train_set), len(validation_set), len(test_set))
+    test_set: GestureDataset = load_dataset("processed_data/test_data", preload_tensors=True)
 
-    print("Training, validation and test sets loaded.")
+    print(f"Test set of size {len(test_set)} loaded")
 
     loss_function: torch.nn.modules.loss._Loss = torch.nn.CrossEntropyLoss().to(gpu)
 
@@ -51,9 +52,9 @@ if __name__ == "__main__":
 
         print("Model trained, evaluating model...")
 
-        training_accuracy: float = pipeline.evaluate(train_set, BATCH_SIZE, gpu)
+        training_accuracy: float = pipeline.evaluate(train_set, BATCH_SIZE, gpu, [0, 1, 2, 3, 4])
 
-        validation_accuracy: float = pipeline.evaluate(validation_set, BATCH_SIZE, gpu)
+        validation_accuracy: float = pipeline.evaluate(validation_set, BATCH_SIZE, gpu, [0, 1, 2, 3, 4])
 
         print(f"{training_accuracy}% training accuracy and {validation_accuracy}% validation accuracy achieved.")
 

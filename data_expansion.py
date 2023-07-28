@@ -1,5 +1,6 @@
 import torch
 import torchvision
+from torchvision.transforms.functional import rotate
 from PIL import Image, ImageOps, ImageFilter
 
 def create_additional_samples(image_tensor: torch.Tensor) -> list[torch.Tensor]:
@@ -31,7 +32,7 @@ def create_additional_samples(image_tensor: torch.Tensor) -> list[torch.Tensor]:
 
         new_samples.append(add_noise_to_tensor(image_clone))
 
-        image_clone = rotate_by_90_degrees(image_clone)
+        image_clone = rotate(image_clone, 90.0)
 
     new_samples_expanded: list[torch.Tensor] = []
 
@@ -55,66 +56,13 @@ def create_additional_samples(image_tensor: torch.Tensor) -> list[torch.Tensor]:
 
     return new_samples_expanded
 
-def rotate_by_90_degrees(image_tensor: torch.Tensor) -> torch.Tensor:
-    
-    """
-    Rotates a 2D array representing an image by 90 degrees, 
-    or pi/4 radians, to the right.
-
-    This is done by transposing the image, then reversing along
-    the rows. To demonstrate that this works, consider a
-    matrix structured like so:
-
-    a b c
-
-    d e f
-
-    g h i
-    
-    We wish to turn it into this:
-
-    g d a
-
-    h e b
-
-    i f c
-
-    Transposing the matrix yields:
-
-    a d g
-
-    b e h
-
-    i f c
-
-    Reversing along the rows yields, as desired:
-
-    g d a
-
-    h e b
-
-    i f c
-
-    Args:
-
-        torch.Tensor image_tensor: the image to rotate.
-
-    Returns:
-
-        the image rotated by 90 degrees to the right.
-    """
-
-    transposed_image: torch.Tensor = torch.transpose(image_tensor, 1, 2)
-
-    return torch.flip(transposed_image, dims=(2,))
-
 def add_noise_to_tensor(image_tensor: torch.Tensor) -> torch.Tensor:
 
     """
     Adds Gaussian noise to a given image tensor.
 
     Gaussian distribution possesses a mean of 0 and
-    a standard deviation of 0.2.
+    a standard deviation of 0.05.
 
     Args:
 

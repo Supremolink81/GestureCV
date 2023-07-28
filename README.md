@@ -5,6 +5,18 @@ Uses a CNN for Image Classification, then performs Object Detection using 1 of 4
 
 See below for report on how the pipeline was developed.
 
+# Lessons Learned From This
+
+Just as a preliminary to this, here are some very important lessons I learned from this project:
+
+- do not gather your own data unless the data you need doesn't already exist and you have expertise in data collection practices
+
+- training a neural network from scratch is not a good idea; look for pretrained options first.
+
+- try to find simple architectures first, then work your way up if your model is underfitting when being trained
+
+- do not use unbalanced datasets!
+
 # Data Collection
 
 A total of 1500 image samples were collected, according to the following format:
@@ -62,7 +74,15 @@ The optimizer we will use is stochastic gradient descent, as this was used by th
 
 For more details regarding this, see the Trials.md file.
 
-Our end result is a learning rate of [], a momentum of [], [] epochs, and a batch size of [].
+At a certain point, I gave up on training a classifier from scratch as it proved to be too difficult given the models at my disposal and also since I discovered that object detection models have decent classification already built in. For completeness though, I attach the results of the last training epoch I did. Statistics were collected using 10 random seeds.
+
+Our training hyperparameters for the classifier on the last iteration are a learning rate of 0.1, 60 epochs, a batch size of 500, and a regularization coefficient of 0.035.
+
+For the training data, this yields [] accuracy, [] precision, [] recall, [] f1 score, and the following confusion matrix (over all iterations):
+
+(In progress...)
+
+For the validation data, this yields [] accuracy, [] precision, [] recall, [] f1 score, and the following confusion matrix (over all iterations):
 
 (In progress...)
 

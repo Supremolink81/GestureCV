@@ -1,5 +1,7 @@
 import torch
 from torch.utils import data
+import numpy as np
+from sklearn.metrics import confusion_matrix
 
 class Pipeline(torch.nn.Module):
 
@@ -104,7 +106,7 @@ class ClassificationPipeline(Pipeline):
 
         super().__init__(model, optimizer, loss_function)
 
-    def evaluate(self, test_data: data.Dataset, batch_size: int = 1, gpu: torch.device = None) -> float:
+    def evaluate(self, test_data: data.Dataset, batch_size: int = 1, gpu: torch.device = None, labels=None) -> float:
 
         correctly_predicted: int = 0
         test_samples: int = len(test_data)
@@ -112,6 +114,10 @@ class ClassificationPipeline(Pipeline):
         test_data_loader: data.DataLoader = data.DataLoader(test_data, batch_size=batch_size, shuffle=True)
 
         with torch.no_grad():
+
+            ground_truth_labels: list[torch.Tensor] = []
+
+            model_predicted_labels: list[torch.Tensor] = []
 
             for images, labels in test_data_loader:
 
@@ -131,7 +137,17 @@ class ClassificationPipeline(Pipeline):
 
                 class_predictions: torch.Tensor = torch.max(model_predictions, 1)[1]
 
+                ground_truth_labels.append(image_labels.cpu())
+
+                model_predicted_labels.append(class_predictions.cpu())
+
                 correctly_predicted += (class_predictions == image_labels).sum().item()
+
+            ground_truth_array: np.array = torch.cat(ground_truth_labels).numpy()
+
+            model_prediction_array: np.array = torch.cat(model_predicted_labels).numpy()
+
+            evaluation_confusion_matrix: np.array = confusion_matrix(ground_truth_array, model_prediction_array, labels=labels)
 
         percent_accuracy: float = 100 * correctly_predicted / test_samples
 
