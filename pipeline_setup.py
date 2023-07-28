@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 from torch.utils import data
 import os
 import random
+import time
 import preprocessing
 import data_expansion
     
@@ -130,6 +131,30 @@ def preprocess_image_data(
 
     load_image_file_paths(test_image_file_paths, test_image_data_folder)
 
+def load_datasets(paths: list[str], preload_tensors: list[bool]) -> list[GestureDataset]:
+
+    """
+    Loads a list of paths represenging
+
+    Args:
+
+        `str paths`: the paths to the folders to load.
+
+        `bool preload_tensors`: whether to preload the tensor data for each folder.
+    """
+
+    gesture_datasets: list[GestureDataset] = []
+
+    for path, preload_tensors_for_path in zip(paths, preload_tensors):
+
+        loaded_dataset: GestureDataset = load_dataset(path, preload_tensors_for_path)
+    
+        gesture_datasets.append(loaded_dataset)
+
+        print(f"Data from path {path} loaded.")
+
+    return gesture_datasets
+
 def load_image_file_paths(image_file_paths: list[str], folder_path: str, augument: bool = False) -> None:
 
     """
@@ -180,9 +205,9 @@ def load_dataset(path: str, preload_tensors: bool = False) -> GestureDataset:
 
     Args:
 
-        str path: the path to the folder to load.
+        `str path`: the path to the folder to load.
 
-        bool preload_tensors: whether to preload the tensor data.
+        `bool preload_tensors`: whether to preload the tensor data.
 
     Returns:
 
@@ -232,7 +257,7 @@ def plot_loss_graph(loss_values: list[float]) -> None:
 
     Args:
 
-        list[float] loss_values: the list of loss values to graph.
+        `list[float] loss_values`: the list of loss values to graph.
 
     Returns:
 
@@ -246,3 +271,23 @@ def plot_loss_graph(loss_values: list[float]) -> None:
     plt.ylabel("Loss Value")
 
     plt.show()
+
+def set_random_seed_to_time() -> None:
+
+    """
+    Sets the random seed to the current system time.
+
+    Args:
+
+        None
+
+    Returns:
+
+        None
+    """
+
+    random_seed: int = time.time()
+
+    print(f"Random seed: {random_seed}")
+
+    random.seed(random_seed)

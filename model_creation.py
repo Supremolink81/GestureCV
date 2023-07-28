@@ -2,36 +2,24 @@ import torch
 from deep_learning_pipelines import ClassificationPipeline
 from pipeline_setup import *
 import random
-import time
-import os
 import torchvision
-from evaluation import print_evaluation_metrics
+import evaluation
 
 if __name__ == "__main__":
 
-    random_seed: int = time.time()
-
-    print(random_seed)
-
-    random.seed(random_seed)
+    set_random_seed_to_time()
 
     gpu = torch.device("cuda:0")
 
-    train_set: GestureDataset = load_dataset("processed_data/training_data", preload_tensors=True)
-
-    print(f"Training set of size {len(train_set)} loaded.")
-
-    validation_set: GestureDataset = load_dataset("processed_data/validation_data", preload_tensors=True)
-
-    print(f"Validation set of size {len(validation_set)} loaded.")
-
-    test_set: GestureDataset = load_dataset("processed_data/test_data", preload_tensors=True)
+    train_set, validation_set, test_set = load_datasets(["processed_data/training_data", "processed_data/validation_data", "processed_data/test_data"], 3 * [True])
 
     print(f"Test set of size {len(test_set)} loaded")
 
     loss_function: torch.nn.modules.loss._Loss = torch.nn.CrossEntropyLoss().to(gpu)
 
     while True:
+
+        set_random_seed_to_time()
 
         LEARNING_RATE, EPOCHS, BATCH_SIZE, REGULARIZATION_COEFFICIENT = get_training_hyperparameters()
 
@@ -61,10 +49,10 @@ if __name__ == "__main__":
 
         print("Training data results:")
 
-        print_evaluation_metrics(training_ground_truth, training_model_predictions, label_names)
+        evaluation.print_evaluation_metrics(training_ground_truth, training_model_predictions, label_names)
 
         print("Validation data results:")
 
-        print_evaluation_metrics(validation_ground_truth, validation_model_predictions, label_names)
+        evaluation.print_evaluation_metrics(validation_ground_truth, validation_model_predictions, label_names)
 
         torch.save(pipeline.model.state_dict(), "GestureNN.pth")

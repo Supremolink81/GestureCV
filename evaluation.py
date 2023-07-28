@@ -1,6 +1,10 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 
+EMPTY_MATRIX: np.array = np.array(
+    5 * [5 * [0.0]],
+)
+
 def print_evaluation_metrics(ground_truth_array: np.array, model_prediction_array: np.array, labels: list[str]) -> None:
 
     """
@@ -27,19 +31,25 @@ def print_evaluation_metrics(ground_truth_array: np.array, model_prediction_arra
         None
     """
 
-    overall_accuracy: float = np.sum(ground_truth_array == model_prediction_array)[0] / ground_truth_array.shape[0]
+    global EMPTY_MATRIX
+
+    overall_accuracy: float = np.sum(ground_truth_array == model_prediction_array) / ground_truth_array.shape[0]
 
     confusion_matrix_of_results: np.array = confusion_matrix(ground_truth_array, model_prediction_array)
+
+    EMPTY_MATRIX += confusion_matrix_of_results
 
     precision_array, recall_array, f1_score_array, _ = precision_recall_fscore_support(ground_truth_array, model_prediction_array)
 
     print(f"Overall accuracy: {overall_accuracy}")
 
+    print(f"Confusion Matrix: {confusion_matrix_of_results}")
+
     for label_index, label in enumerate(labels):
 
         print(f"Statistics for label {label}:\n")
 
-        print(f"Precision: {recall_array[label_index]}")
+        print(f"Precision: {precision_array[label_index]}")
 
         print(f"Recall: {recall_array[label_index]}")
 

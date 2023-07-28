@@ -76,7 +76,7 @@ For more details regarding this, see the Trials.md file.
 
 At a certain point, I gave up on training a classifier from scratch as it proved to be too difficult given the models at my disposal and also since I discovered that object detection models have decent classification already built in. For completeness though, I attach the results of the last training epoch I did. Statistics were collected using 10 random seeds.
 
-Our training hyperparameters for the classifier on the last iteration are a learning rate of 0.1, 60 epochs, a batch size of 500, and a regularization coefficient of 0.035.
+Our training hyperparameters for the classifier on the last iteration are a learning rate of 0.1, 80 epochs, a batch size of 500, a regularization coefficient of 0.03, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs.
 
 For the training data, this yields [] accuracy, [] precision, [] recall, [] f1 score, and the following confusion matrix (over all iterations):
 
