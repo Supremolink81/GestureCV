@@ -1,19 +1,18 @@
 import torch
 from deep_learning_pipelines import ClassificationPipeline
 from pipeline_setup import *
-import random
 import torchvision
 import evaluation
 
 if __name__ == "__main__":
+
+    print(evaluation.EMPTY_MATRIX)
 
     set_random_seed_to_time()
 
     gpu = torch.device("cuda:0")
 
     train_set, validation_set, test_set = load_datasets(["processed_data/training_data", "processed_data/validation_data", "processed_data/test_data"], 3 * [True])
-
-    print(f"Test set of size {len(test_set)} loaded")
 
     loss_function: torch.nn.modules.loss._Loss = torch.nn.CrossEntropyLoss().to(gpu)
 

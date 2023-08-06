@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 
 EMPTY_MATRIX: np.array = np.array(
-    5 * [5 * [0.0]],
+    5 * [5 * [0]], dtype=np.int64,
 )
 
 def print_evaluation_metrics(ground_truth_array: np.array, model_prediction_array: np.array, labels: list[str]) -> None:
@@ -44,6 +44,8 @@ def print_evaluation_metrics(ground_truth_array: np.array, model_prediction_arra
     print(f"Overall accuracy: {overall_accuracy}")
 
     print(f"Confusion Matrix: {confusion_matrix_of_results}")
+
+    print(f"Overall confusion matrix: {EMPTY_MATRIX}")
 
     for label_index, label in enumerate(labels):
 

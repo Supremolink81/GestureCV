@@ -78,6 +78,8 @@ At a certain point, I gave up on training a classifier from scratch as it proved
 
 Our training hyperparameters for the classifier on the last iteration are a learning rate of 0.1, 80 epochs, a batch size of 500, a regularization coefficient of 0.03, and using a step based learning rate scheduler with a gamma value of 0.1 and application every 10 epochs.
 
+(It should be noted that after the 3rd trial, I started using a training pipeline based on optimizations available through MosaicML, which influenced how the model was trained and thus its accuracies).
+
 For the training data, this yields [] accuracy, [] precision, [] recall, [] f1 score, and the following confusion matrix (over all iterations):
 
 (In progress...)
