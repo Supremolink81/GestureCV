@@ -1,58 +1,36 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
+import torchmetrics
 
-EMPTY_MATRIX: np.array = np.array(
-    5 * [5 * [0]], dtype=np.int64,
-)
+class MetricState:
 
-def print_evaluation_metrics(ground_truth_array: np.array, model_prediction_array: np.array, labels: list[str]) -> None:
+    state: dict[str, torchmetrics.Metric]
 
-    """
-    Prints various evaluation metrics to the console, including:
+    def __init__(self, state: dict[str, torchmetrics.Metric]):
 
-    - confusion matrix
-    - accuracy
-    - precision
-    - recall
-    - f1 score
+        self.state = state
 
-    And does so according to given class labels.
+    def update_state(self, ground_truth: np.array, model_predictions: np.array) -> None:
 
-    Args:
+        """
+        Updates the state history and running average state of a metric
+        with the given ground truth and model predictions.
 
-        `np.array ground_truth_array`: the array to use for ground truth labels.
+        Args:
 
-        `np.array model_prediction_array`: the array to use for model predictions.
+            `str state_name`: the name of the metric state to change.
+        """
 
-        `list[str] labels`: the labels to use for printing.
+        for state_value in self.state.values():
 
-    Returns:
+            state_value.update(model_predictions, ground_truth)
 
-        None
-    """
+    def __repr__(self):
 
-    global EMPTY_MATRIX
+        state_string: str = ""
 
-    overall_accuracy: float = np.sum(ground_truth_array == model_prediction_array) / ground_truth_array.shape[0]
+        for state_name, state_value in self.state.items():
 
-    confusion_matrix_of_results: np.array = confusion_matrix(ground_truth_array, model_prediction_array)
+            state_string += state_name + 
 
-    EMPTY_MATRIX += confusion_matrix_of_results
-
-    precision_array, recall_array, f1_score_array, _ = precision_recall_fscore_support(ground_truth_array, model_prediction_array)
-
-    print(f"Overall accuracy: {overall_accuracy}")
-
-    print(f"Confusion Matrix: {confusion_matrix_of_results}")
-
-    print(f"Overall confusion matrix: {EMPTY_MATRIX}")
-
-    for label_index, label in enumerate(labels):
-
-        print(f"Statistics for label {label}:\n")
-
-        print(f"Precision: {precision_array[label_index]}")
-
-        print(f"Recall: {recall_array[label_index]}")
-
-        print(f"F1 score: {f1_score_array[label_index]}\n")
+        return f"MetricState(\n{})"
