@@ -29,11 +29,11 @@ class GestureDataset(data.Dataset):
 
         if self.image_tensors is not None:
 
-            image_tensor: torch.Tensor= self.image_tensors[index]
+            image_tensor: torch.Tensor= self.image_tensors[index].float()
 
         else:
 
-            image_tensor: torch.Tensor = preprocessing.preprocess_image(image_name)
+            image_tensor: torch.Tensor = preprocessing.preprocess_image(image_name).float()
 
         image_label_tensor: torch.Tensor = torch.Tensor([1, 0, 0, 0, 0])
 
@@ -134,7 +134,7 @@ def preprocess_image_data(
 def load_datasets(paths: list[str], preload_tensors: list[bool]) -> list[GestureDataset]:
 
     """
-    Loads a list of paths represenging
+    Loads a list of paths to image files into PyTorch datasets.
 
     Args:
 

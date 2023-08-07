@@ -402,8 +402,6 @@ We train with a learning rate of 0.1, a batch size of 500, and 60 epochs, with a
 
 ![Loss Function Graph 64](./loss_graphs/loss_function_graph_64.png)
 
-Ok, using a CNN has not worked almost at all so far. I think it's time to pivot to something not only more complete, but better suited for the task at hand; the You Only Look Once (YOLO) model for object detection.
-
 Thus far, the model has overfit for many reasons, some of which I list below:
 
 - the dataset is too small; perhaps more data needed to be collected.
@@ -412,8 +410,22 @@ Thus far, the model has overfit for many reasons, some of which I list below:
 
 - model architecture is too complex; a complex model architecture can lead to the model "memorizing the data", as the abundance of parameters will lead to more fine tuning, and thus, more variance in the model predictions caused by the extra parameters picking up noise.
 
-The YOLO model, especially the sizes designed for real-time applications, are known to not be the most accurate, so we will be far more lenient in terms of accuracy (in addition, using a CNN didn't have much success either, so we can't bee too picky for state-of-the-art accuracies).
+We will be introducing some additional pipeline changes to mitigate overfitting and speed up training. Using the MosaicML package, the following changes will be implemented into the pipeline:
 
-YOLOv5n is what we will start with (it contains 1.9 million parameters).
+- Data Augmentation: Rather than 9 degrees of blurring, we will now have 4, as the extra degrees of blurring may not be helping the model learn (in fact, visually, beyond the 6th blur, the images become nearly unrecognizable).
 
-(In progress..)
+- Label Smoothing: instead of having one hot encoded labels for classes, the labels will be smoothed with a uniform prior with a strength of 0.1 (i.e. according to the following equation: `smoothed_labels = (original_labels * 0.9) + (0.1 / 5))`). 
+
+- BlurPool: BlurPool increases accuracy while maintaining nearly the same training and inference speed by applying a spatial filter before pooling and convolution operations. A visualization of the effects are below:
+
+![BlurPool Image](./blurpoolimage.png)
+
+- MixUp: For any pair of examples, MixUp trains the network on a convex combination (i.e. `(1 - factor) * image1 + factor * image2` for some number 0 <= `factor` <= 1) of the images and their respective targets. A visualization:
+
+![MixUp Image](./mixupimage.png)
+
+- Sharpness Aware Minimization (SAM): this is an optimization algorithm that minimizes the loss and its sharpness simultaneously, resulting in a smoother and more easily navigable loss landscape. To estimate the sharpness A visualization (left is without SAM, right is with SAM. Note that these are 3D representations of high dimensional landscapes, so the representation is not perfect):
+
+![Sharpness Aware Minimization Image](./samimage.png)
+
+SAM, BlurPool, MixUp, and the augmentation change are meant for training and generalization improvements. The latter 3, in experiments, do not influence training speed that much, whereas SAM makes training take approximately double the time.

@@ -1,9 +1,9 @@
 # GestureCV (Work In Progress)
-Deep Learning + Computer Vision project to detect one of 4 hand gestures in images/video.
+Deep Learning + Computer Vision project to classify one of 4 hand gestures in images/video.
 
-Uses a CNN for Image Classification, then performs Object Detection using 1 of 4 different models depending on the detected gesture.
+Uses a CNN for Image Classification.
 
-See below for report on how the pipeline was developed.
+(This was originally an object detection project, but due to time and development constraints I changed it to a purely classification based project).
 
 # Lessons Learned From This
 
@@ -34,6 +34,8 @@ A few sample images are shown below:
 ![Third Sample Image](./IMG_10920.png)
 
 Photos were taken using an iPhone 13 Pro in the HEIC format, with 2316x3088 pixel resolution. When ported to a Windows PC, their resolution changed, with some images being 756x1008 and some being 579x772.
+
+Through a flip along the x axis for the 4 gesture classes, the dataset was expanded to 2500 images, 500 for each class.
 
 # Issues around the data collection
 

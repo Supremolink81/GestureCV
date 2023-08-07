@@ -59,8 +59,6 @@ def display_image_label(label_tensor: torch.Tensor) -> str:
 
 if __name__ == "__main__":
 
-    cv2.ml_LogisticRegression
-
     camera = cv2.VideoCapture(0)
 
     camera_running: bool = True

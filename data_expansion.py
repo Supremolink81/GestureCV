@@ -36,7 +36,7 @@ def create_additional_samples(image_tensor: torch.Tensor) -> list[torch.Tensor]:
 
     new_samples_expanded: list[torch.Tensor] = []
 
-    for blur_factor in range(9):
+    for blur_factor in range(4):
 
         for sample in new_samples:
 
