@@ -226,7 +226,7 @@ def load_dataset(path: str, preload_tensors: bool = False) -> GestureDataset:
 
     return GestureDataset(image_paths, preload_tensors=preload_tensors)
 
-def get_training_hyperparameters() -> tuple[float, int, int, float]:
+def get_training_hyperparameters() -> tuple[float, int, int, float, int]:
 
     """
     Helper function to get the learning rate, epochs, batch size and L2 regularization coefficient.
@@ -237,7 +237,7 @@ def get_training_hyperparameters() -> tuple[float, int, int, float]:
 
     Returns:
 
-        A tuple containing the learning rate, epochs, batch size and L2 regularization coefficient.
+        A tuple containing the learning rate, epochs, batch size, L2 regularization coefficient and step size.
     """
 
     LEARNING_RATE: float = float(input("Enter learning rate: "))
@@ -248,7 +248,9 @@ def get_training_hyperparameters() -> tuple[float, int, int, float]:
 
     REGULARIZATION_COEFFICIENT: float = float(input("Enter regularization coefficient: "))
 
-    return (LEARNING_RATE, EPOCHS, BATCH_SIZE, REGULARIZATION_COEFFICIENT)
+    STEP_SIZE: int = int(input("Enter learning rate scheduler step size: "))
+
+    return (LEARNING_RATE, EPOCHS, BATCH_SIZE, REGULARIZATION_COEFFICIENT, STEP_SIZE)
 
 def plot_loss_graph(loss_values: list[float]) -> None:
 

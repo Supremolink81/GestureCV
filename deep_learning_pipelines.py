@@ -82,7 +82,7 @@ class Pipeline(torch.nn.Module):
 
                     labels = labels.to(gpu)
 
-                images, labels, _ = cf.mixup_batch(images, labels, alpha=1.0)
+                #images, labels, _ = cf.mixup_batch(images, labels, alpha=1.0)
 
                 self.optimizer.zero_grad()
 
@@ -122,10 +122,6 @@ class Pipeline(torch.nn.Module):
 
         return loss_values
     
-    def evaluate(self, test_data: data.Dataset, batch_size: int) -> None:
-
-        assert False # must be implemented
-    
 class ClassificationPipeline(Pipeline):
 
     def __init__(self, model: torch.nn.Module, optimizer: torch.optim.Optimizer, loss_function: torch.nn.modules.loss._Loss):
@@ -164,8 +160,8 @@ class ClassificationPipeline(Pipeline):
 
                 model_predicted_labels.append(class_predictions.cpu())
 
-            ground_truth_array: np.array = torch.cat(ground_truth_labels).numpy()
+            ground_truth_array: torch.Tensor = torch.cat(ground_truth_labels)
 
-            model_prediction_array: np.array = torch.cat(model_predicted_labels).numpy()
+            model_prediction_array: torch.Tensor = torch.cat(model_predicted_labels)
 
         return ground_truth_array, model_prediction_array

@@ -1,6 +1,5 @@
-import numpy as np
-from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 import torchmetrics
+import torch
 
 class MetricState:
 
@@ -10,7 +9,7 @@ class MetricState:
 
         self.state = state
 
-    def update_state(self, ground_truth: np.array, model_predictions: np.array) -> None:
+    def update_state(self, ground_truth: torch.Tensor, model_predictions: torch.Tensor) -> None:
 
         """
         Updates the state history and running average state of a metric
@@ -31,6 +30,14 @@ class MetricState:
 
         for state_name, state_value in self.state.items():
 
-            state_string += state_name + 
+            state_string += f"  {state_name}: "
 
-        return f"MetricState(\n{})"
+            try:
+
+                state_string += f"{state_value.compute()}\n"
+
+            except ValueError:
+
+                state_string += f"{torch.zeros(state_value.num_classes, dtype=torch.float16)}\n"
+
+        return f"MetricState(\n{state_string})"

@@ -410,6 +410,8 @@ Thus far, the model has overfit for many reasons, some of which I list below:
 
 - model architecture is too complex; a complex model architecture can lead to the model "memorizing the data", as the abundance of parameters will lead to more fine tuning, and thus, more variance in the model predictions caused by the extra parameters picking up noise.
 
+- the image resolution is too low (64 x 64 is pretty small for images considering the usual size is 224 x 224).
+
 We will be introducing some additional pipeline changes to mitigate overfitting and speed up training. Using the MosaicML package, the following changes will be implemented into the pipeline:
 
 - Data Augmentation: Rather than 9 degrees of blurring, we will now have 4, as the extra degrees of blurring may not be helping the model learn (in fact, visually, beyond the 6th blur, the images become nearly unrecognizable).
@@ -420,12 +422,46 @@ We will be introducing some additional pipeline changes to mitigate overfitting 
 
 ![BlurPool Image](./blurpoolimage.png)
 
-- MixUp: For any pair of examples, MixUp trains the network on a convex combination (i.e. `(1 - factor) * image1 + factor * image2` for some number 0 <= `factor` <= 1) of the images and their respective targets. A visualization:
+BlurPool, label smoothing and the augmentation change are meant for training and generalization improvements, and do not significantly harm training time.
 
-![MixUp Image](./mixupimage.png)
+There was another optimization technique, called SAM (Sharpness Aware Minimization) that optimizes loss and loss sharpness at the same time to allow better exploration of the loss landscape. In initial experiments, though, it was found that SAM in this task led the model to a false minimum that resulted in it only predicting one class.
 
-- Sharpness Aware Minimization (SAM): this is an optimization algorithm that minimizes the loss and its sharpness simultaneously, resulting in a smoother and more easily navigable loss landscape. To estimate the sharpness A visualization (left is without SAM, right is with SAM. Note that these are 3D representations of high dimensional landscapes, so the representation is not perfect):
+All algorithms described above can be found 
 
-![Sharpness Aware Minimization Image](./samimage.png)
+There will be a few changes to the metrics we report; we will be adding precision, recall, F1 score, and the confusion matrix for both the training and validation sets. In addition, these metrics, with accuracy, will be reported by class, rather than overall, in order to gain better insight into the effectiveness of the model on different classes.
 
-SAM, BlurPool, MixUp, and the augmentation change are meant for training and generalization improvements. The latter 3, in experiments, do not influence training speed that much, whereas SAM makes training take approximately double the time.
+When describing metrics, we will use the following format for accuracy, precision, recall and F1 score:
+
+Metric Name: 0.9, 0.3, 0.4, 0.2, 0.7
+
+And will be plotting and displaying the confusion matrix.
+
+Let's go for more epochs to see if the model can be trained further this time around.
+
+We train with a learning rate of 0.01, a batch size of 500, 200 epochs, with a regularization coefficient of 0.04 and with a learning rate scheduler applied every 40 epochs, decreasing the learning rate by a factor of 10. This yields the following metric scores and confusion matrix for training:
+
+Accuracy: 0.9967, 0.9993, 0.9960, 0.9954, 0.9998
+Precision: 0.9981, 0.9963, 0.9980, 0.9982, 0.9966
+Recall: 0.9967, 0.9993, 0.9960, 0.9954, 0.9998
+F1 Score: 0.9974, 0.9978, 0.9970, 0.9968, 0.9982
+
+![Training Confusion Matrix 1](./confusion_matrices/training/confusion_matrix_1.png)
+
+For validation:
+
+Accuracy: 0.6200, 0.5700, 0.6000, 0.5900, 0.5700
+Precision: 0.6526, 0.5044, 0.6383, 0.5728, 0.6000
+Recall: 0.6200, 0.5700, 0.6000, 0.5900, 0.5700
+F1 Score: 0.6359, 0.5352, 0.6186, 0.5813, 0.5846
+
+![Validation Confusion Matrix 1](./confusion_matrices/validation/confusion_matrix_1.png)
+
+And the following loss graph:
+
+![Loss Function Graph 65](./loss_graphs/loss_function_graph_65.png)
+
+Alright, it appears decreasing the learning rate allows us to increase regularization without facing the bottleneck issue we were facing earlier. Let's decrease learning rate, increase regularization, and increase epochs.
+
+We train with a learning rate of 0.001, a batch size of 500, 300 epochs, with a regularization coefficient of 0.1 and with a learning rate scheduler applied every 50 epochs, decreasing the learning rate by a factor of 10. This yields the following metric scores and confusion matrix for training:
+
+(In progress...)
