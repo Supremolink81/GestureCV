@@ -402,16 +402,6 @@ We train with a learning rate of 0.1, a batch size of 500, and 60 epochs, with a
 
 ![Loss Function Graph 64](./loss_graphs/loss_function_graph_64.png)
 
-Thus far, the model has overfit for many reasons, some of which I list below:
-
-- the dataset is too small; perhaps more data needed to be collected.
-
-- the variance in the images is high. This can lead to overfitting, as high variance in the images makes it difficult for the model to learn underlying structure.
-
-- model architecture is too complex; a complex model architecture can lead to the model "memorizing the data", as the abundance of parameters will lead to more fine tuning, and thus, more variance in the model predictions caused by the extra parameters picking up noise.
-
-- the image resolution is too low (64 x 64 is pretty small for images considering the usual size is 224 x 224).
-
 We will be introducing some additional pipeline changes to mitigate overfitting and speed up training. Using the MosaicML package, the following changes will be implemented into the pipeline:
 
 - Data Augmentation: Rather than 9 degrees of blurring, we will now have 4, as the extra degrees of blurring may not be helping the model learn (in fact, visually, beyond the 6th blur, the images become nearly unrecognizable).
@@ -464,4 +454,183 @@ Alright, it appears decreasing the learning rate allows us to increase regulariz
 
 We train with a learning rate of 0.001, a batch size of 500, 300 epochs, with a regularization coefficient of 0.1 and with a learning rate scheduler applied every 50 epochs, decreasing the learning rate by a factor of 10. This yields the following metric scores and confusion matrix for training:
 
-(In progress...)
+Accuracy: 0.0938, 0.6699, 0.1182, 0.6409, 0.3616
+Precision: 0.3181, 0.4917, 0.2981, 0.3608, 0.3091
+Recall: 0.0938, 0.6699, 0.1182, 0.6409, 0.3616
+F1 Score: 0.1449, 0.5671, 0.1693, 0.4617, 0.3333
+
+![Training Confusion Matrix 2](./confusion_matrices/training/confusion_matrix_2.png)
+
+For validation:
+
+Accuracy: 0.1000, 0.5400, 0.0600, 0.3900, 0.2900
+Precision: 0.3846, 0.3803, 0.2222, 0.2143, 0.2358
+Recall: 0.1000, 0.5400, 0.0600, 0.3900, 0.2900
+F1 Score: 0.1587, 0.4463, 0.0945, 0.2766, 0.2601
+
+![Validation Confusion Matrix 2](./confusion_matrices/validation/confusion_matrix_2.png)
+
+And the following loss graph:
+
+![Loss Function Graph 66](./loss_graphs/loss_function_graph_66.png)
+
+Alright, the loss graph suggests the learning rate is too low, and the regularization is causing the model to underfit and not be able to train past a certain point. let's increase learning rate, decrease regularization, and decrease epochs to ensure we can do more rapid testing. 
+
+Though, more comprehensively, decreasing learning rate seems to allow for more regularization, as a lower learning rate means the model will oscillate less when trying to perform gradient descent. What I will try is a very high learning rate, but with a scheduler that updates very frequently (every 5 epochs).
+
+We train with a learning rate of 0.5, a batch size of 500, 100 epochs, a regularization coefficient of 0.1 and a learning rate scheduler applied every 5 epochs, decreasing the learning rate by a factor of 10. This yields the following metric scores and confusion matrix for training:
+
+Accuracy: 0., 1., 0., 0., 0.
+Precision: 0.0000, 0.2000, 0.0000, 0.0000, 0.0000
+Recall: 0., 1., 0., 0., 0.
+F1 Score: 0.0000, 0.3333, 0.0000, 0.0000, 0.0000
+
+![Training Confusion Matrix 3](./confusion_matrices/training/confusion_matrix_3.png)
+
+For validation:
+
+Accuracy: 0., 1., 0., 0., 0.
+Precision: 0.0000, 0.2000, 0.0000, 0.0000, 0.0000
+Recall: 0., 1., 0., 0., 0.
+F1 Score: 0.0000, 0.3333, 0.0000, 0.0000, 0.0000
+
+![Validation Confusion Matrix 3](./confusion_matrices/validation/confusion_matrix_3.png)
+
+And the following loss graph:
+
+![Loss Function Graph 67](./loss_graphs/loss_function_graph_67.png)
+
+Learning rate was definitely too high for a first initialization. Let's decrease it. It also seems the learning rate was decreased too dramatically; let's increase the step size for the scheduler. Though, the model seems to only be predicting one class; could it be due to the high regularization?
+
+We train with a learning rate of 0.1, a batch size of 500, 100 epochs, a regularization coefficient of 0.1 and a learning rate scheduler applied every 8 epochs, decreasing the learning rate by a factor of 10. This yields the following metric scores and confusion matrix for training:
+
+Accuracy: 1., 0., 0., 0., 0.
+Precision: 0.2000, 0.0000, 0.0000, 0.0000, 0.0000
+Recall: 1., 0., 0., 0., 0.
+F1 Score: 0.3333, 0.0000, 0.0000, 0.0000, 0.0000
+
+![Training Confusion Matrix 4](./confusion_matrices/training/confusion_matrix_4.png)
+
+For validation:
+
+Accuracy: 1., 0., 0., 0., 0.
+Precision: 0.2000, 0.0000, 0.0000, 0.0000, 0.0000
+Recall: 1., 0., 0., 0., 0.
+F1 Score: 0.3333, 0.0000, 0.0000, 0.0000, 0.0000
+
+![Validation Confusion Matrix 4](./confusion_matrices/validation/confusion_matrix_4.png)
+
+And the following loss graph:
+
+![Loss Function Graph 68](./loss_graphs/loss_function_graph_68.png)
+
+Learning rate is still too high, as is regularization. Predicting only one class again, so it seems that too high of a regularization forces the model to a fail state.
+
+We train with a learning rate of 0.01, a batch size of 500, 100 epochs, a regularization coefficient of 0.07 and a learning rate scheduler applied every 8 epochs, decreasing the learning rate by a factor of 10. This yields the following metric scores and confusion matrix for training:
+
+Accuracy: 0.5759, 0.8401, 0.1524, 0.1355, 0.5734
+Precision: 0.3989, 0.7608, 0.3696, 0.3250, 0.3534
+Recall: 0.5759, 0.8401, 0.1524, 0.1355, 0.5734
+F1 Score: 0.4713, 0.7985, 0.2158, 0.1913, 0.4373
+
+![Training Confusion Matrix 5](./confusion_matrices/training/confusion_matrix_5.png)
+
+For validation:
+
+Accuracy: 0.4600, 0.5400, 0.1000, 0.0800, 0.4300
+Precision: 0.3433, 0.3913, 0.2174, 0.2222, 0.2945
+Recall: 0.4600, 0.5400, 0.1000, 0.0800, 0.4300
+F1 Score: 0.3932, 0.4538, 0.1370, 0.1176, 0.3496
+
+![Validation Confusion Matrix 5](./confusion_matrices/validation/confusion_matrix_5.png)
+
+And the following loss graph:
+
+![Loss Function Graph 69](./loss_graphs/loss_function_graph_69.png)
+
+We could also try increasing the batch size slightly to decrease oscillation. Let's also increase the frequency of gradient reductions, and decrease regularization slightly.
+
+We train with a learning rate of 0.01, a batch size of 600, 200 epochs, a regularization coefficient of 0.06 and a learning rate scheduler applied every 5 epochs, decreasing the learning rate by a factor of 10. This yields the following metric scores and confusion matrix for training:
+
+Accuracy: 0.3362, 0.5298, 0.2048, 0.1671, 0.1763
+Precision: 0.2560, 0.3391, 0.2583, 0.2620, 0.2541
+Recall: 0.3362, 0.5298, 0.2048, 0.1671, 0.1763
+F1 Score: 0.2907, 0.4135, 0.2285, 0.2041, 0.2082
+
+![Training Confusion Matrix 6](./confusion_matrices/training/confusion_matrix_6.png)
+
+For validation:
+
+Accuracy: 0.2400, 0.5700, 0.2100, 0.1300, 0.1300
+Precision: 0.2069, 0.3585, 0.2442, 0.2031, 0.1733
+Recall: 0.2400, 0.5700, 0.2100, 0.1300, 0.1300
+F1 Score: 0.2222, 0.4402, 0.2258, 0.1585, 0.1486
+
+![Validation Confusion Matrix 6](./confusion_matrices/validation/confusion_matrix_6.png)
+
+And the following loss graph:
+
+![Loss Function Graph 70](./loss_graphs/loss_function_graph_70.png)
+
+At this point, I think the data issues are intractable for this problem. Thus far, the model has overfit for many reasons, some of which I list below:
+
+- the dataset is far too small; 1500 images, even with augmentation to several dozen thousand, it is not enough for a classification task for 5 classes, especially since 4 of the classes are relatively similar (the gestures) compared to one of them (the no gesture class). 
+
+- the variance in the images is high. This can lead to overfitting, as high variance in the images makes it difficult for the model to learn underlying structure.
+
+- model architecture is too complex; a complex model architecture can lead to the model "memorizing the data", as the abundance of parameters will lead to more fine tuning, and thus, more variance in the model predictions caused by the extra parameters picking up noise.
+
+- the image resolution is too low (64 x 64 is pretty small for images considering the usual size is 224 x 224).
+
+Future improvements:
+
+- use an already collected dataset of tens of thousands, hundreds of thousands, or even millions of images. This not only allows for more data, but the data collection techniques are probably more professional than something a hobbyist can come up with.
+
+- find a smaller model; perhaps make a custom one for this task?
+
+For the moment, I will train over 20 random seeds, averaging the results to gain a sense of how the model performs without being biased towards a particularly good or bad seed.
+
+The initial random seed for processing the dataset is 1691883753.241458. I will be listing the 20 random seeds I used for each iteration, with respect to the code I wrote for training. 
+
+For each training iteration, we will be training with a learning rate of 0.01, a batch size of 500, 200 epochs, with a regularization coefficient of 0.04 and with a learning rate scheduler applied every 40 epochs, decreasing the learning rate by a factor of 10.
+
+Seed 1: 1691883970.3270166
+Seed 2: 1691888203.4505343
+Seed 3: 1691897443.9814541
+Seed 4: 1691901613.6147473
+Seed 5: 1691939729.9142544
+Seed 6: 1691947600.564883
+Seed 7: 1691978890.4875207
+Seed 8: 1691986336.710399
+Seed 9: 1692026021.178986
+Seed 10: 1692030043.3519087
+Seed 11: 1692044173.4390643
+Seed 12: 1692048219.769961
+Seed 13: 1692052592.1534941
+Seed 14: 1692061847.0878477
+Seed 15: 1692066071.2971876
+Seed 16: 1692070349.0205696
+Seed 17: 1692112955.962577
+Seed 18: 1692142890.9382367
+Seed 19: 1692196518.7583253
+Seed 20: 1692200774.6266866
+
+Overall Results:
+
+Training:
+
+Accuracy: 0.9969299999999996, 0.9986500000000001, 0.9976149999999999, 0.996955, 0.9971
+Precision: 0.9977550000000001, 0.9965999999999999, 0.99767, 0.9976700000000001, 0.9975749999999998
+Recall: 0.9969299999999996, 0.9986500000000001, 0.9976149999999999, 0.996955, 0.9971
+F1 score: 0.9973400000000001, 0.9976199999999998, 0.9976450000000001, 0.9973149999999997, 0.9973399999999998
+
+![Training Confusion Matrix 7](./confusion_matrices/training/confusion_matrix_7.png)
+
+Validation:
+    
+Accuracy: 0.6134999999999999, 0.5475000000000001, 0.5894999999999999, 0.5765, 0.622
+Precision: 0.61753, 0.548345, 0.5948299999999999, 0.5605, 0.63036
+Recall: 0.6134999999999999, 0.5475000000000001, 0.5894999999999999, 0.5765, 0.622
+F1 score: 0.6151199999999999, 0.54776, 0.5918449999999998, 0.56815, 0.625685
+
+![Validation Confusion Matrix 7](./confusion_matrices/validation/confusion_matrix_7.png)

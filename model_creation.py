@@ -2,12 +2,31 @@ import torch
 from deep_learning_pipelines import *
 from pipeline_setup import *
 from evaluation import MetricState
+from composer.algorithms.sam import SAMOptimizer
 import torchvision
 from sklearn.metrics import ConfusionMatrixDisplay
 
 if __name__ == "__main__":
 
-    print(sum(p.numel() for p in torchvision.models.resnet18(num_classes=5).parameters()))
+    train_state: MetricState = MetricState({
+        "Accuracy" : torchmetrics.Accuracy(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "Precision" : torchmetrics.Precision(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "Recall" : torchmetrics.Recall(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "F1 Score" : torchmetrics.F1Score(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "Confusion Matrix" : torchmetrics.ConfusionMatrix(task='multiclass', num_classes=5),
+    })
+
+    print("Training state initialized.")
+    
+    validation_state: MetricState = MetricState({
+        "Accuracy" : torchmetrics.Accuracy(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "Precision" : torchmetrics.Precision(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "Recall" : torchmetrics.Recall(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "F1 Score" : torchmetrics.F1Score(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
+        "Confusion Matrix" : torchmetrics.ConfusionMatrix(task='multiclass', num_classes=5),
+    })
+
+    print("Validation state initialized.")
 
     set_random_seed_to_time()
 
@@ -25,31 +44,13 @@ if __name__ == "__main__":
 
         set_random_seed_to_time()
 
-        train_state: MetricState = MetricState({
-            "Accuracy" : torchmetrics.Accuracy(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "Precision" : torchmetrics.Precision(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "Recall" : torchmetrics.Recall(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "F1 Score" : torchmetrics.F1Score(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "Confusion Matrix" : torchmetrics.ConfusionMatrix(task='multiclass', num_classes=5),
-        })
-
-        print("Training state initialized.")
-    
-        validation_state: MetricState = MetricState({
-            "Accuracy" : torchmetrics.Accuracy(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "Precision" : torchmetrics.Precision(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "Recall" : torchmetrics.Recall(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "F1 Score" : torchmetrics.F1Score(task='multiclass', average='none', num_classes=5, multidim_average='samplewise'),
-            "Confusion Matrix" : torchmetrics.ConfusionMatrix(task='multiclass', num_classes=5),
-        })
-
-        print("Validation state initialized.")
-
         LEARNING_RATE, EPOCHS, BATCH_SIZE, REGULARIZATION_COEFFICIENT, STEP_SIZE = get_training_hyperparameters()
 
         architecture: torch.nn.Module = torchvision.models.shufflenet_v2_x0_5(num_classes=5).to(gpu)
 
         optimizer: torch.optim.Optimizer = torch.optim.SGD(architecture.parameters(), lr=LEARNING_RATE, weight_decay=REGULARIZATION_COEFFICIENT)
+
+        sam_optimizer: SAMOptimizer = SAMOptimizer(optimizer)
 
         learning_rate_scheduler: torch.optim.lr_scheduler.LRScheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=STEP_SIZE, gamma=0.1)
 

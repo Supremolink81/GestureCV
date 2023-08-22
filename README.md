@@ -17,6 +17,8 @@ Just as a preliminary to this, here are some very important lessons I learned fr
 
 - do not use unbalanced datasets!
 
+- do not expect to be able to train state of the art models on a laptop with a GTX 1650 GPU...lack of compute is certainly a hindrance.
+
 # Data Collection
 
 A total of 1500 image samples were collected, according to the following format:
@@ -76,7 +78,68 @@ The optimizer we will use is stochastic gradient descent, as this was used by th
 
 For more details regarding this, see the Trials.md file.
 
-(In progress...)
+Ultimately, I think the data issues are intractable for this problem. The model overfit for many reasons, some of which I list below:
+
+- the dataset is far too small; 1500 images, even with augmentation to several dozen thousand, it is not enough for a classification task for 5 classes, especially since 4 of the classes are relatively similar (the gestures) compared to one of them (the no gesture class). 
+
+- the variance in the images is high. This can lead to overfitting, as high variance in the images makes it difficult for the model to learn underlying structure.
+
+- model architecture is too complex; a complex model architecture can lead to the model "memorizing the data", as the abundance of parameters will lead to more fine tuning, and thus, more variance in the model predictions caused by the extra parameters picking up noise.
+
+- the image resolution is too low (64 x 64 is pretty small for images considering the usual size is 224 x 224).
+
+Future improvements:
+
+- use an already collected dataset of tens of thousands, hundreds of thousands, or even millions of images. This not only allows for more data, but the data collection techniques are probably more professional than something a hobbyist can come up with.
+
+- find a smaller model; perhaps make a custom one for this task?
+
+For the final evaluation of the model, I will train over 20 random seeds, averaging the results to gain a sense of how the model performs without being biased towards a particularly good or bad seed.
+
+The initial random seed for processing the dataset is 1691883753.241458. I will be listing the 20 random seeds I used for each iteration, with respect to the code I wrote for training. 
+
+For each training iteration, the model was trained with a learning rate of 0.01, a batch size of 500, 200 epochs, with a regularization coefficient of 0.04 and with a learning rate scheduler applied every 40 epochs, decreasing the learning rate by a factor of 10.
+
+Seed 1: 1691883970.3270166
+Seed 2: 1691888203.4505343
+Seed 3: 1691897443.9814541
+Seed 4: 1691901613.6147473
+Seed 5: 1691939729.9142544
+Seed 6: 1691947600.564883
+Seed 7: 1691978890.4875207
+Seed 8: 1691986336.710399
+Seed 9: 1692026021.178986
+Seed 10: 1692030043.3519087
+Seed 11: 1692044173.4390643
+Seed 12: 1692048219.769961
+Seed 13: 1692052592.1534941
+Seed 14: 1692061847.0878477
+Seed 15: 1692066071.2971876
+Seed 16: 1692070349.0205696
+Seed 17: 1692112955.962577
+Seed 18: 1692142890.9382367
+Seed 19: 1692196518.7583253
+Seed 20: 1692200774.6266866
+
+Overall Results:
+
+Training:
+
+Accuracy: 0.9969299999999996, 0.9986500000000001, 0.9976149999999999, 0.996955, 0.9971
+Precision: 0.9977550000000001, 0.9965999999999999, 0.99767, 0.9976700000000001, 0.9975749999999998
+Recall: 0.9969299999999996, 0.9986500000000001, 0.9976149999999999, 0.996955, 0.9971
+F1 score: 0.9973400000000001, 0.9976199999999998, 0.9976450000000001, 0.9973149999999997, 0.9973399999999998
+
+![Training Confusion Matrix 7](./confusion_matrices/training/confusion_matrix_7.png)
+
+Validation:
+    
+Accuracy: 0.6134999999999999, 0.5475000000000001, 0.5894999999999999, 0.5765, 0.622
+Precision: 0.61753, 0.548345, 0.5948299999999999, 0.5605, 0.63036
+Recall: 0.6134999999999999, 0.5475000000000001, 0.5894999999999999, 0.5765, 0.622
+F1 score: 0.6151199999999999, 0.54776, 0.5918449999999998, 0.56815, 0.625685
+
+![Validation Confusion Matrix 7](./confusion_matrices/validation/confusion_matrix_7.png)
 
 # References
 
